@@ -44,6 +44,7 @@ const createInvoice = async (req, res) => {
         }
 
         let subtotal = 0;
+        let taxableSubtotal = 0;
         const itemsData = [];
 
         for (let reqItem of items) {
@@ -57,6 +58,9 @@ const createInvoice = async (req, res) => {
             const total_price = quantity * unit_price;
             
             subtotal += total_price;
+            if (itemDef.is_taxable) {
+                taxableSubtotal += total_price;
+            }
             
             itemsData.push({
                 item_id: itemDef.id,
@@ -66,7 +70,7 @@ const createInvoice = async (req, res) => {
             });
         }
 
-        const { taxRate, taxAmount } = calculateGST(subtotal, customer.is_registered);
+        const { taxRate, taxAmount } = calculateGST(taxableSubtotal, customer.is_registered);
         const grandTotal = calculateTotal(subtotal, taxAmount);
 
         const invoice_number = await generateInvoiceId();

@@ -42,8 +42,9 @@ const Billing = () => {
         .filter(c => c.qty > 0 && c.item);
 
     const subtotal = activeCartArray.reduce((acc, curr) => acc + (curr.item.price * curr.qty), 0);
+    const taxableSubtotal = activeCartArray.reduce((acc, curr) => acc + (curr.item.is_taxable ? curr.item.price * curr.qty : 0), 0);
     const taxRate = selectedCustomer?.is_registered ? 0 : 18;
-    const taxAmount = (subtotal * taxRate) / 100;
+    const taxAmount = (taxableSubtotal * taxRate) / 100;
     const grandTotal = subtotal + taxAmount;
 
     // Helpers
@@ -171,7 +172,7 @@ const Billing = () => {
                                                 ) : (
                                                     activeCartArray.map(row => (
                                                         <TableRow key={row.item.id}>
-                                                            <TableCell>{row.item.name}</TableCell>
+                                                            <TableCell>{row.item.name} {!row.item.is_taxable && <Typography variant="caption" color="text.secondary" display="block">(Non-Taxable)</Typography>}</TableCell>
                                                             <TableCell align="center">{row.qty}</TableCell>
                                                             <TableCell align="right">₹{row.item.price * row.qty}</TableCell>
                                                         </TableRow>
@@ -183,11 +184,17 @@ const Billing = () => {
 
                                     <Box mt={4} pt={3} borderTop="1px solid" borderColor="divider">
                                         <Box display="flex" justifyContent="space-between" mb={1}>
-                                            <Typography color="text.secondary">Subtotal</Typography>
+                                            <Typography color="text.secondary">Gross Subtotal</Typography>
                                             <Typography>₹{subtotal.toFixed(2)}</Typography>
                                         </Box>
+                                        {(taxableSubtotal !== subtotal) && (
+                                            <Box display="flex" justifyContent="space-between" mb={1}>
+                                                <Typography color="text.secondary">Taxable Amount Portion</Typography>
+                                                <Typography>₹{taxableSubtotal.toFixed(2)}</Typography>
+                                            </Box>
+                                        )}
                                         <Box display="flex" justifyContent="space-between" mb={1}>
-                                            <Typography color="text.secondary">GST Rate Logic</Typography>
+                                            <Typography color="text.secondary">GST Rate Applied</Typography>
                                             <Typography>{selectedCustomer ? `${taxRate}%` : '--'}</Typography>
                                         </Box>
                                         <Box display="flex" justifyContent="space-between" mb={2}>
