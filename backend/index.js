@@ -78,7 +78,7 @@ const createTables = async () => {
 
             DO $$ 
             BEGIN
-                IF NOT EXISTS (SELECT 1 FROM Customers LIMIT 1) THEN
+                IF NOT EXISTS (SELECT 1 FROM Customers WHERE customer_code = 'C00001') THEN
                     INSERT INTO Customers (customer_code, name, address, pan, gstin, is_registered, is_active) VALUES 
                     ('C00001', 'Gupta Enterprize Pvt. Ltd.', 'Gurgaon, Haryana', 'BCNSG1234H', '06BCNSG1234H1Z5', true, true),
                     ('C00002', 'Mahesh Industries Pvt. Ltd.', 'Delhi, Delhi', 'AMNSM1234U', '07AMNSM1234U1Z5', true, true),
@@ -87,7 +87,7 @@ const createTables = async () => {
                     ('C00005', 'Swastik Software Pvt. Ltd.', 'Gurgaon, Haryana', 'AGBCS1234B', '06AGBCS1234B1Z5', true, true);
                 END IF;
 
-                IF NOT EXISTS (SELECT 1 FROM Items LIMIT 1) THEN
+                IF NOT EXISTS (SELECT 1 FROM Items WHERE item_code = 'IT00001') THEN
                     INSERT INTO Items (item_code, name, price, is_taxable, is_active) VALUES 
                     ('IT00001', 'Laptop', 85000, true, true),
                     ('IT00002', 'LED Monitor', 13450, true, true),
